@@ -15,7 +15,7 @@ window.onload = function() {
     function create() {
 
         game.physics.startSystem(Phaser.Physics.P2JS)
-        game.stage.backgroundColor = '#2d2d2d'
+        game.stage.backgroundColor = '#DCDCDC'
 
         game.physics.p2.setImpactEvents(true)
 
@@ -26,6 +26,8 @@ window.onload = function() {
         let leafCollisionGroup = game.physics.p2.createCollisionGroup()
 
         game.physics.p2.updateBoundsCollisionGroup()
+
+    /* Dots */
 
         let dots = game.add.group()
         dots.enableBody = true
@@ -39,6 +41,23 @@ window.onload = function() {
         dot.body.collides([dotCollisionGroup, leafCollisionGroup])
 
         game.physics.p2.enable(dot)
+
+    /* leafs */
+
+        let leafs = game.add.group()
+        leafs.enableBody = true
+        leafs.physicsBodyType = Phaser.Physics.P2JS
+
+        let leaf = leafs.create(350, 300, 'leaf')
+        leaf.body.setRectangle(125, 10)
+
+        leaf.body.setCollisionGroup(leafCollisionGroup)
+
+        leaf.body.collides([dotCollisionGroup, leafCollisionGroup])
+
+        game.physics.p2.enable(leaf)
+
+        leaf.body.static = true
 
     }
 
