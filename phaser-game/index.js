@@ -5,6 +5,9 @@ window.onload = function() {
         preload: preload, create: create, update: update, render: render
     })
 
+    let dot
+    let leaf
+
     function preload() {
 
         game.load.image('dot', '../assets/blue_circle.png')
@@ -33,7 +36,7 @@ window.onload = function() {
         dots.enableBody = true
         dots.physicsBodyType = Phaser.Physics.P2JS
 
-        let dot = dots.create(400, 0, 'dot')
+        dot = dots.create(400, 0, 'dot')
         dot.body.setCircle(12.5)
 
         dot.body.setCollisionGroup(dotCollisionGroup)
@@ -48,7 +51,7 @@ window.onload = function() {
         leafs.enableBody = true
         leafs.physicsBodyType = Phaser.Physics.P2JS
 
-        let leaf = leafs.create(350, 300, 'leaf')
+        leaf = leafs.create(375, 300, 'leaf')
         leaf.body.setRectangle(125, 10)
 
         leaf.body.setCollisionGroup(leafCollisionGroup)
@@ -57,15 +60,17 @@ window.onload = function() {
 
         game.physics.p2.enable(leaf)
 
-        leaf.body.static = true
+        leaf.body.kinematic = true
+
+        leaf.using = false
+
+        leaf.anchor.setTo(0.5, 0.5)
 
     }
 
     function update() {
 
-        // Collide dots with platforms
-        // game.physics.arcade.collide(dots, platforms)
-
+        leaf.body.angle -= 1
 
     }
 
