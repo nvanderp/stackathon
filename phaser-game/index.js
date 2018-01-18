@@ -8,12 +8,14 @@ window.onload = function() {
     let leafPad
     let leafPads
     let leaf
+    let leaf2
     let dot
     let dots
     let dotCollisionGroup
     let leafCollisionGroup
     let dotTimer = 0
     let dragging = false
+    let curPadClicked = null
 
     function preload() {
 
@@ -58,28 +60,35 @@ window.onload = function() {
         leafs.physicsBodyType = Phaser.Physics.P2JS
 
         leaf = leafs.create(375, 300, 'leaf')
+        leaf2 = leafs.create(200, 450, 'leaf')
         leafPad = leafPads.create(312.5, 240, 'leafPad')
 
         game.world.sendToBack(leafPads)
 
         leaf.body.setRectangle(125, 10)
+        leaf2.body.setRectangle(125, 10)
 
         leaf.body.setCollisionGroup(leafCollisionGroup)
+        leaf2.body.setCollisionGroup(leafCollisionGroup)
 
         leaf.body.collides([dotCollisionGroup, leafCollisionGroup])
+        leaf2.body.collides([dotCollisionGroup, leafCollisionGroup])
 
         game.physics.p2.enable(leaf)
+        game.physics.p2.enable(leaf2)
 
         leaf.body.kinematic = true
+        leaf2.body.kinematic = true
 
         leaf.anchor.setTo(0.5, 0.5)
+        leaf2.anchor.setTo(0.5, 0.5)
 
     /* Event Listeners */
 
-        // leaf.inputEnabled = true
         leafPad.inputEnabled = true
 
-        // leafPad.events.onInputDown.add(() => rotateLeaf(leaf))
+        leafPad.events.onInputDown.add(recordClick, this)
+        leafPad.events.onInputUp.add(resetClick)
 
     }
 
@@ -87,7 +96,9 @@ window.onload = function() {
 
         if (game.time.now > dotTimer) spawnDot()
 
-        if (game.input.activePointer.isDown) {rotateLeaf(leaf)}
+        if (game.input.activePointer.isDown && curPadClicked) {
+            rotateLeaf(leaf)
+        }
 
     }
 
@@ -115,10 +126,10 @@ window.onload = function() {
         }
     }
 
-    function rotateLeaf(leaf) {
+    function rotateLeaf(curLeaf) {
 
         let targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
-            leaf.x, leaf.y,
+            curLeaf.x, curLeaf.y,
             game.input.activePointer.x, game.input.activePointer.y
         ) + 90
 
@@ -128,7 +139,19 @@ window.onload = function() {
 
         if (!game.input.activePointer.isDown && dragging) dragging = false
 
-        if (dragging) leaf.body.angle = targetAngle
+        if (dragging) curLeaf.body.angle = targetAngle
+    }
+
+    function recordClick(leafPad) {
+
+        curPadClicked = leafPad
+
+    }
+
+    function resetClick() {
+
+        curPadClicked = null
+
     }
 
 }
