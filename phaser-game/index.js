@@ -5,8 +5,10 @@ window.onload = function() {
         preload: preload, create: create, update: update, render: render
     })
 
-    let dot
+    let leafPad
+    let leafPads
     let leaf
+    let dot
     let dots
     let dotCollisionGroup
     let leafCollisionGroup
@@ -16,6 +18,7 @@ window.onload = function() {
 
         game.load.image('dot', '../assets/blue_circle.png')
         game.load.image('leaf', '../assets/leaf.png')
+        game.load.image('leafPad', '../assets/leaf_pad.png')
 
     }
 
@@ -46,10 +49,16 @@ window.onload = function() {
     /* leafs */
 
         leafs = game.add.group()
+        leafPads = game.add.group()
+
         leafs.enableBody = true
         leafs.physicsBodyType = Phaser.Physics.P2JS
 
         leaf = leafs.create(375, 300, 'leaf')
+        leafPad = leafPads.create(312.5, 240, 'leafPad')
+
+        game.world.sendToBack(leafPads)
+
         leaf.body.setRectangle(125, 10)
 
         leaf.body.setCollisionGroup(leafCollisionGroup)
@@ -62,7 +71,7 @@ window.onload = function() {
 
         leaf.using = false
 
-        leaf.anchor.setTo(0, 0.5)
+        leaf.anchor.setTo(0.5, 0.5)
 
     }
 
@@ -81,19 +90,19 @@ window.onload = function() {
     }
 
     function spawnDot() {
-        
-        dot = dots.getFirstExists(false)
-    
-        // dot = dots.create(400, 0, 'dot')
-        dot.body.setCircle(12.5)
-    
-        dot.body.setCollisionGroup(dotCollisionGroup)
-    
-        dot.body.collides([dotCollisionGroup, leafCollisionGroup])
-    
-        game.physics.p2.enable(dot)
+
+        dot = dots.getFirstExists(false)    
     
         if (dot) {
+
+            dot.body.setCircle(12.5)
+    
+            dot.body.setCollisionGroup(dotCollisionGroup)
+        
+            dot.body.collides([dotCollisionGroup, leafCollisionGroup])
+        
+            game.physics.p2.enable(dot)
+            
             dot.reset(400, 0)
 
             dotTimer = game.time.now + 2000
