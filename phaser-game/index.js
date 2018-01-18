@@ -16,6 +16,7 @@ window.onload = function() {
     let dotTimer = 0
     let dragging = false
     let curPadClicked = null
+    let leafToRotate
 
     function preload() {
 
@@ -62,6 +63,7 @@ window.onload = function() {
         leaf = leafs.create(375, 300, 'leaf')
         leaf2 = leafs.create(200, 450, 'leaf')
         leafPad = leafPads.create(312.5, 240, 'leafPad')
+        leafPad2 = leafPads.create(137.5, 390, 'leafPad')
 
         game.world.sendToBack(leafPads)
 
@@ -86,9 +88,13 @@ window.onload = function() {
     /* Event Listeners */
 
         leafPad.inputEnabled = true
+        leafPad2.inputEnabled = true
 
         leafPad.events.onInputDown.add(recordClick, this)
         leafPad.events.onInputUp.add(resetClick)
+
+        leafPad2.events.onInputDown.add(recordClick, this)
+        leafPad2.events.onInputUp.add(resetClick)
 
     }
 
@@ -142,9 +148,12 @@ window.onload = function() {
         if (dragging) curLeaf.body.angle = targetAngle
     }
 
-    function recordClick(leafPad) {
+    function recordClick(leafPad, pointer) {
 
+
+        console.log(pointer)
         curPadClicked = leafPad
+        console.log(curPadClicked)
 
     }
 
