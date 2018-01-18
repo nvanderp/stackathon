@@ -17,6 +17,7 @@ window.onload = function() {
     let dragging = false
     let curPadClicked = null
     let leafToRotate
+    let leafArr = []
 
     function preload() {
 
@@ -61,9 +62,15 @@ window.onload = function() {
         leafs.physicsBodyType = Phaser.Physics.P2JS
 
         leaf = leafs.create(375, 300, 'leaf')
+        leaf.name = 'leaf'
         leaf2 = leafs.create(200, 450, 'leaf')
+        leaf2.name = 'leaf2'
         leafPad = leafPads.create(312.5, 240, 'leafPad')
+        leafPad.name = 'leaf'
         leafPad2 = leafPads.create(137.5, 390, 'leafPad')
+        leafPad2.name = 'leaf2'
+
+        leafArr.push(leaf, leaf2)
 
         game.world.sendToBack(leafPads)
 
@@ -103,7 +110,10 @@ window.onload = function() {
         if (game.time.now > dotTimer) spawnDot()
 
         if (game.input.activePointer.isDown && curPadClicked) {
-            rotateLeaf(leaf)
+            leafToRotate = leafArr.find((leaf) => {
+                return leaf.name === curPadClicked.name
+            })
+            rotateLeaf(leafToRotate)
         }
 
     }
@@ -148,12 +158,10 @@ window.onload = function() {
         if (dragging) curLeaf.body.angle = targetAngle
     }
 
-    function recordClick(leafPad, pointer) {
+    function recordClick(leafPad) {
 
-
-        console.log(pointer)
+        console.log(leafPad.name)
         curPadClicked = leafPad
-        console.log(curPadClicked)
 
     }
 
