@@ -13,8 +13,11 @@ window.onload = function() {
     let dotCollisionGroup
     let leafCollisionGroup
     let dotTimer = 0
+    let dragging = false
 
     function preload() {
+
+        game.input.maxPointers = 1
 
         game.load.image('dot', '../assets/blue_circle.png')
         game.load.image('leaf', '../assets/leaf.png')
@@ -69,19 +72,22 @@ window.onload = function() {
 
         leaf.body.kinematic = true
 
-        leaf.using = false
-
         leaf.anchor.setTo(0.5, 0.5)
+
+    /* Event Listeners */
+
+        // leaf.inputEnabled = true
+        leafPad.inputEnabled = true
+
+        // leafPad.events.onInputDown.add(() => rotateLeaf(leaf))
 
     }
 
     function update() {
 
-        leaf.body.angle -= 1
+        if (game.time.now > dotTimer) spawnDot()
 
-        if (game.time.now > dotTimer) {
-            spawnDot()
-        }
+        if (game.input.activePointer.isDown) {rotateLeaf(leaf)}
 
     }
 
@@ -107,6 +113,22 @@ window.onload = function() {
 
             dotTimer = game.time.now + 2000
         }
+    }
+
+    function rotateLeaf(leaf) {
+
+        let targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
+            leaf.x, leaf.y,
+            game.input.activePointer.x, game.input.activePointer.y
+        ) + 90
+
+        if (targetAngle < 0) targetAngle += 360
+
+        if (game.input.activePointer.isDown && !dragging) dragging = true
+
+        if (!game.input.activePointer.isDown && dragging) dragging = false
+
+        if (dragging) leaf.body.angle = targetAngle
     }
 
 }
