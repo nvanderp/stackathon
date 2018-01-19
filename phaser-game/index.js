@@ -103,6 +103,9 @@ window.onload = function() {
         leafPad2.events.onInputDown.add(recordClick, this)
         leafPad2.events.onInputUp.add(resetClick)
 
+        // Listeners with Tone
+        leaf.body.onBeginContact.add(playNote, this)
+
     }
 
     function update() {
@@ -160,7 +163,6 @@ window.onload = function() {
 
     function recordClick(leafPad) {
 
-        console.log(leafPad.name)
         curPadClicked = leafPad
 
     }
@@ -171,4 +173,24 @@ window.onload = function() {
 
     }
 
+}
+
+/* TONE JS */
+
+const synth = new Tone.PolySynth(4, Tone.Synth, {
+    "oscillator" : {
+        "partials" : [0, 2, 3, 4]
+    },
+    "envelope" : {
+        "attack" : 0.01,
+        "decay" : 0.2,
+        "sustain" : 0.02,
+        "release" : 0.02,
+    }
+}).toMaster()
+
+synth.set("volume", -15)
+
+function playNote () {
+    synth.triggerAttackRelease('C3', .5)
 }
