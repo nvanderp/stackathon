@@ -36,7 +36,7 @@ window.onload = function() {
 
         game.physics.p2.setImpactEvents(true)
 
-        game.physics.p2.restitution = 0.5
+        game.physics.p2.restitution = 0.7
         game.physics.p2.gravity.y = 300
 
         dotCollisionGroup = game.physics.p2.createCollisionGroup()
@@ -131,6 +131,8 @@ window.onload = function() {
     
         if (dot) {
 
+            // let randoX = Math.floor(Math.random() * 800)
+
             dot.body.setCircle(12.5)
     
             dot.body.setCollisionGroup(dotCollisionGroup)
@@ -189,9 +191,8 @@ const synth = new Tone.PolySynth(4, Tone.Synth, {
     }
 }).toMaster()
 
-synth.set("volume", -15)
+synth.set("volume", -10)
 
 function playNote (note) {
-    console.log(note)
     synth.triggerAttackRelease(note, .5)
 }
