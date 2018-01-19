@@ -104,8 +104,8 @@ window.onload = function() {
         leafPad2.events.onInputUp.add(resetClick)
 
         // Listeners with Tone
-        leaf.body.onBeginContact.add(playNote, this)
-
+        leaf.body.onBeginContact.add(() => playNote('C3'))
+        leaf2.body.onBeginContact.add(() => playNote('A3'))
     }
 
     function update() {
@@ -191,6 +191,7 @@ const synth = new Tone.PolySynth(4, Tone.Synth, {
 
 synth.set("volume", -15)
 
-function playNote () {
-    synth.triggerAttackRelease('C3', .5)
+function playNote (note) {
+    console.log(note)
+    synth.triggerAttackRelease(note, .5)
 }
