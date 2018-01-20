@@ -338,7 +338,7 @@ window.onload = function() {
     cloudTwo = clouds.create(425, 0, 'cloud')
     cloudTwo.inputEnabled = true
     cloudTwo.input.enableDrag(true)
-    cloud.input.boundsRect = cloudBounds
+    cloudTwo.input.boundsRect = cloudBounds
 
   /* Event Listeners */
     leafOne.events.onInputDown.add(selectLeaf, this)
