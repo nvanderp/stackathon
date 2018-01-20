@@ -7,6 +7,7 @@ window.onload = function() {
 
     let clouds
     let cloud
+    let cloudArr = []
     let leafPad
     let leafPads
     let leaf
@@ -118,8 +119,6 @@ window.onload = function() {
         leafPad2.events.onInputDown.add(recordClick, this)
         leafPad2.events.onInputUp.add(resetClick)
 
-        // Point of contact
-
         // Listeners with Tone
         leaf.body.onBeginContact.add(() => playNote('C3'))
         leaf2.body.onBeginContact.add(() => playNote('A3'))
@@ -144,21 +143,32 @@ window.onload = function() {
 
     function spawnDot() {
 
+        cloudArr.length = 0
+
+        clouds.forEach((cloud) => {
+            cloudArr.push(cloud)
+        })
+
+        console.log(cloudArr)
+
         dot = dots.getFirstExists(false)    
     
         if (dot) {
 
-            // let randoX = Math.floor(Math.random() * 800)
+            let random = game.rnd.integerInRange(0,cloudArr.length-1)
+            let randomX = game.rnd.integerInRange(30, 85)
+
+            let randoCloud = cloudArr[random]
 
             dot.body.setCircle(12.5)
     
             dot.body.setCollisionGroup(dotCollisionGroup)
         
-            dot.body.collides([dotCollisionGroup, leafCollisionGroup])
+            dot.body.collides([leafCollisionGroup])
         
             game.physics.p2.enable(dot)
             
-            dot.reset(400, 0)
+            dot.reset(randoCloud.body.x + randomX, randoCloud.body.y + 30)
 
             dotTimer = game.time.now + 2000
         }
