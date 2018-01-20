@@ -35,7 +35,9 @@ window.onload = function() {
     game.load.image('cloud', '../assets/cloud.png')
     game.load.image('leaf', '../assets/leaf_pad.png')
     game.load.image('stemWhole', '../assets/stem.png')
-    game.load.image('stemPiece', '../assets/stem_split.png')
+    game.load.image('stemLeft', '../assets/stem_left.png')
+    game.load.image('stemMiddle', '../assets/stem_split.png')
+    game.load.image('stemRight', '../assets/stem_right.png')
     game.load.image('drop', '../assets/blue_circle.png')
 
   }
@@ -74,33 +76,33 @@ window.onload = function() {
     stems.enableBody = true
     stems.physicsBodyType = Phaser.Physics.P2JS
 
-    stemOneAnchor = stems.create(375, 300, 'stemWhole')
+    stemOneAnchor = stems.create(375, 300)
     stemOneAnchor.name = 'leafOne stemAnchor'
     game.physics.p2.enable(stemOneAnchor)
     stemOneAnchor.body.kinematic = true
     stemOneAnchor.anchor.setTo(0.5, 0.5)
 
-    stemOneLeft = stems.create(stemOneAnchor.x -42 , stemOneAnchor.y, 'stemPiece')
-    stemOneLeft.name = 'leafOne stemLeft'
-    stemOneLeft.body.setRectangle(42, 10)
+    stemOneLeft = stems.create(stemOneAnchor.x, stemOneAnchor.y, 'stemLeft')
+    stemOneLeft.name = 'leafOne stem stemLeft'
+    stemOneLeft.body.setRectangle(42, 10, -42)
     stemOneLeft.body.setCollisionGroup(stemCollisionGroup)
     stemOneLeft.body.collides([dropCollisionGroup, stemCollisionGroup])
     game.physics.p2.enable(stemOneLeft)
     stemOneLeft.body.kinematic = true
     stemOneLeft.anchor.setTo(0.5, 0.5)
 
-    stemOneMiddle = stems.create(stemOneAnchor.x, stemOneAnchor.y, 'stemPiece')
-    stemOneMiddle.name = 'leafOne stemMiddle'
-    stemOneMiddle.body.setRectangle(42, 10)
+    stemOneMiddle = stems.create(stemOneAnchor.x, stemOneAnchor.y, 'stemMiddle')
+    stemOneMiddle.name = 'leafOne stem stemMiddle'
+    stemOneMiddle.body.setRectangle(42, 10) // 42, 10
     stemOneMiddle.body.setCollisionGroup(stemCollisionGroup)
     stemOneMiddle.body.collides([dropCollisionGroup, stemCollisionGroup])
     game.physics.p2.enable(stemOneMiddle)
     stemOneMiddle.body.kinematic = true
     stemOneMiddle.anchor.setTo(0.5, 0.5)
 
-    stemOneRight = stems.create(stemOneAnchor.x + 42, stemOneAnchor.y, 'stemPiece')
-    stemOneRight.name = 'leafOne stemRight'
-    stemOneRight.body.setRectangle(42, 10)
+    stemOneRight = stems.create(stemOneAnchor.x, stemOneAnchor.y, 'stemRight')
+    stemOneRight.name = 'leafOne stem stemRight'
+    stemOneRight.body.setRectangle(42, 10, 42)
     stemOneRight.body.setCollisionGroup(stemCollisionGroup)
     stemOneRight.body.collides([dropCollisionGroup, stemCollisionGroup])
     game.physics.p2.enable(stemOneRight)
@@ -127,6 +129,9 @@ window.onload = function() {
   /* Event Listeners */
     leafOne.events.onInputDown.add(selectLeaf, this)
     leafOne.events.onInputUp.add(resetSelectLeaf)
+
+  /* Pivot Points */
+    let constraint = game.physics.p2.createLockConstraint(stemOneMiddle, stemOneRight, [42, 0], 0)
 
   }
 
@@ -199,10 +204,20 @@ window.onload = function() {
           stem.body.angle = targetAngle
         }
       }
-      if (!stem.name.includes('stemAnchor')) {
+      // if (stem.name.includes('stemLeft')) {
+      //   stem.reset(anchor.body.x - 42, anchor.body.y)
+      //   stem.body.angle = anchor.body.angle
+        
+      // }
+      if (stem.name.includes('stem')) {
         stem.reset(anchor.body.x, anchor.body.y)
         stem.body.angle = anchor.body.angle
       }
+      // else if (stem.name.includes('stemRight')) {
+      //   stem.reset(anchor.body.x + 42, anchor.body.y)
+      //   // stem.body.angle = anchor.body.angle
+      //   stem.position.rotate(anchor.body.x + 42, anchor.body.y, 10, true, 42)
+      // }
     })
 
   }
