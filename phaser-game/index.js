@@ -6,9 +6,10 @@ window.onload = function() {
   })
 
   // Cloud variables
-  let clouds, cloud
-  // let cloudArr = []
+  let clouds, cloud, cloudTwo
+  let cloudArr = []
   let cloudCollisionGroup
+  let cloudBounds
 
   // Leaf variables
   let leafs, leafOne, leafTwo, leafThree, leafFour
@@ -71,7 +72,7 @@ window.onload = function() {
     drops.enableBody = true
     drops.physicsBodyType = Phaser.Physics.P2JS
 
-    drops.createMultiple(30, 'drop')
+    drops.createMultiple(60, 'drop')
     drops.setAll('anchor.x', 0.5)
     drops.setAll('anchor.y', 0.5)
 
@@ -245,9 +246,20 @@ window.onload = function() {
     clouds.enableBody = true
     game.world.bringToTop(clouds)
 
-    cloud = clouds.create(340, 0, 'cloud')
+    // Cloud Dragging Bounds
+    cloudBounds = new Phaser.Rectangle(0, 0, 800, 200)
+
+    // Cloud
+    cloud = clouds.create(270, 0, 'cloud')
     cloud.inputEnabled = true
     cloud.input.enableDrag(true)
+    cloud.input.boundsRect = cloudBounds
+
+    // cloudTwo
+    cloudTwo = clouds.create(425, 0, 'cloud')
+    cloudTwo.inputEnabled = true
+    cloudTwo.input.enableDrag(true)
+    cloud.input.boundsRect = cloudBounds
 
   /* Event Listeners */
     leafOne.events.onInputDown.add(selectLeaf, this)
@@ -324,7 +336,7 @@ window.onload = function() {
 
       drop.reset(randoCloud.body.x + randomX, randoCloud.body.y + 30)
 
-      dropTimer = game.time.now + 1500
+      dropTimer = game.time.now + 2000
     }
 
   }
