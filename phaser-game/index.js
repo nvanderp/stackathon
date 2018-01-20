@@ -49,7 +49,7 @@ window.onload = function() {
 
     game.physics.p2.setImpactEvents(true)
 
-    game.physics.p2.restitution = 0.7
+    game.physics.p2.restitution = 0.5
     game.physics.p2.gravity.y = 300
 
     // Stage Background settings
@@ -84,7 +84,7 @@ window.onload = function() {
 
     stemOneLeft = stems.create(stemOneAnchor.x, stemOneAnchor.y, 'stemLeft')
     stemOneLeft.name = 'leafOne stem stemLeft'
-    stemOneLeft.body.setRectangle(42, 10, -42)
+    stemOneLeft.body.setRectangle(41.5, 10, -41.5)
     stemOneLeft.body.setCollisionGroup(stemCollisionGroup)
     stemOneLeft.body.collides([dropCollisionGroup, stemCollisionGroup])
     game.physics.p2.enable(stemOneLeft)
@@ -93,7 +93,7 @@ window.onload = function() {
 
     stemOneMiddle = stems.create(stemOneAnchor.x, stemOneAnchor.y, 'stemMiddle')
     stemOneMiddle.name = 'leafOne stem stemMiddle'
-    stemOneMiddle.body.setRectangle(42, 10) // 42, 10
+    stemOneMiddle.body.setRectangle(41.5, 10) // 42, 10
     stemOneMiddle.body.setCollisionGroup(stemCollisionGroup)
     stemOneMiddle.body.collides([dropCollisionGroup, stemCollisionGroup])
     game.physics.p2.enable(stemOneMiddle)
@@ -102,7 +102,7 @@ window.onload = function() {
 
     stemOneRight = stems.create(stemOneAnchor.x, stemOneAnchor.y, 'stemRight')
     stemOneRight.name = 'leafOne stem stemRight'
-    stemOneRight.body.setRectangle(42, 10, 42)
+    stemOneRight.body.setRectangle(41.5, 10, 41.5)
     stemOneRight.body.setCollisionGroup(stemCollisionGroup)
     stemOneRight.body.collides([dropCollisionGroup, stemCollisionGroup])
     game.physics.p2.enable(stemOneRight)
@@ -129,6 +129,11 @@ window.onload = function() {
   /* Event Listeners */
     leafOne.events.onInputDown.add(selectLeaf, this)
     leafOne.events.onInputUp.add(resetSelectLeaf)
+
+    // Listners with Tone
+    stemOneLeft.body.onBeginContact.add(() => playNote('C4'))
+    stemOneMiddle.body.onBeginContact.add(() => playNote('C3'))
+    stemOneRight.body.onBeginContact.add(() => playNote('C2'))
 
   /* Pivot Points */
     let constraint = game.physics.p2.createLockConstraint(stemOneMiddle, stemOneRight, [42, 0], 0)
@@ -176,7 +181,7 @@ window.onload = function() {
 
       drop.reset(randoCloud.body.x + randomX, randoCloud.body.y + 30)
 
-      dropTimer = game.time.now + 2000
+      dropTimer = game.time.now + 1500
     }
 
   }
@@ -204,20 +209,10 @@ window.onload = function() {
           stem.body.angle = targetAngle
         }
       }
-      // if (stem.name.includes('stemLeft')) {
-      //   stem.reset(anchor.body.x - 42, anchor.body.y)
-      //   stem.body.angle = anchor.body.angle
-        
-      // }
       if (stem.name.includes('stem')) {
         stem.reset(anchor.body.x, anchor.body.y)
         stem.body.angle = anchor.body.angle
       }
-      // else if (stem.name.includes('stemRight')) {
-      //   stem.reset(anchor.body.x + 42, anchor.body.y)
-      //   // stem.body.angle = anchor.body.angle
-      //   stem.position.rotate(anchor.body.x + 42, anchor.body.y, 10, true, 42)
-      // }
     })
 
   }
@@ -234,4 +229,24 @@ window.onload = function() {
 
   }
 
+}
+
+/* TONE JS */
+
+const synth = new Tone.PolySynth(4, Tone.Synth, {
+  "oscillator" : {
+      "partials" : [0, 2, 3, 4]
+  },
+  "envelope" : {
+      "attack" : 0.01,
+      "decay" : 0.2,
+      "sustain" : 0.02,
+      "release" : 0.02,
+  }
+}).toMaster()
+
+synth.set("volume", -5)
+
+function playNote (note) {
+  synth.triggerAttackRelease(note, .5)
 }
