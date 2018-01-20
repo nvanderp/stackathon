@@ -1,184 +1,192 @@
 window.onload = function() {
 
-    // Game OBJ
-    const game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
-        preload: preload, create: create, update: update, render: render
+  // Game OBJ
+  const game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
+    preload: preload, create: create, update: update, render: render
+  })
+
+  // Cloud variables
+  let clouds, cloud
+  // let cloudArr = []
+  let cloudCollisionGroup
+
+  // Leaf variables
+  let leafs, leaf
+  let curLeafSelected = null
+
+  // Stem variables
+  let stems, stemOneAnchor, stemOneLeft, stemOneMiddle, stemOneRight
+  let selectedStemArr = []
+  let stemCollisionGroup
+  let stemsToRotate
+
+  // Drop variables
+  let drops, drop
+  let dropCollisionGroup
+  let dropTimer = 0
+
+  // Global User variables
+  let dragging = false
+
+  function preload() {
+
+    game.input.maxPointers = 1
+
+    game.load.image('cloud', '../assets/cloud.png')
+    game.load.image('leaf', '../assets/leaf_pad.png')
+    game.load.image('stemWhole', '../assets/stem.png')
+    game.load.image('stemPiece', '../assets/stem_split.png')
+    game.load.image('drop', '../assets/blue_circle.png')
+
+  }
+
+  function create() {
+
+    // Physics
+    game.physics.startSystem(Phaser.Physics.P2JS)
+
+    game.physics.p2.setImpactEvents(true)
+
+    game.physics.p2.restitution = 0.7
+    game.physics.p2.gravity.y = 300
+
+    // Stage Background settings
+    game.stage.backgroundColor = '#DCDCDC'
+
+    // Collision Groups
+    dropCollisionGroup = game.physics.p2.createCollisionGroup()
+    stemCollisionGroup = game.physics.p2.createCollisionGroup()
+    cloudCollisionGroup = game.physics.p2.createCollisionGroup()
+
+    game.physics.p2.updateBoundsCollisionGroup()
+
+  /* Drops */
+    drops = game.add.group()
+    drops.enableBody = true
+    drops.physicsBodyType = Phaser.Physics.P2JS
+
+    drops.createMultiple(30, 'drop')
+    drops.setAll('anchor.x', 0.5)
+    drops.setAll('anchor.y', 0.5)
+
+  /* Stems */
+    stems = game.add.group()
+    stems.enableBody = true
+    stems.physicsBodyType = Phaser.Physics.P2JS
+
+    stemOneAnchor = stems.create(375, 300, 'stemWhole')
+    stemOneAnchor.name = 'leafOne stemAnchor'
+    game.physics.p2.enable(stemOneAnchor)
+    stemOneAnchor.body.kinematic = true
+    stemOneAnchor.anchor.setTo(0.5, 0.5)
+
+    stemOneLeft = stems.create(stemOneAnchor.x -42 , stemOneAnchor.y, 'stemPiece')
+    stemOneLeft.name = 'leafOne stemLeft'
+    stemOneLeft.body.setRectangle(42, 10)
+    stemOneLeft.body.setCollisionGroup(stemCollisionGroup)
+    stemOneLeft.body.collides([dropCollisionGroup, stemCollisionGroup])
+    game.physics.p2.enable(stemOneLeft)
+    stemOneLeft.body.kinematic = true
+    stemOneLeft.anchor.setTo(0.5, 0.5)
+
+    stemOneMiddle = stems.create(stemOneAnchor.x, stemOneAnchor.y, 'stemPiece')
+    stemOneMiddle.name = 'leafOne stemMiddle'
+    stemOneMiddle.body.setRectangle(42, 10)
+    stemOneMiddle.body.setCollisionGroup(stemCollisionGroup)
+    stemOneMiddle.body.collides([dropCollisionGroup, stemCollisionGroup])
+    game.physics.p2.enable(stemOneMiddle)
+    stemOneMiddle.body.kinematic = true
+    stemOneMiddle.anchor.setTo(0.5, 0.5)
+
+    stemOneRight = stems.create(stemOneAnchor.x + 42, stemOneAnchor.y, 'stemPiece')
+    stemOneRight.name = 'leafOne stemRight'
+    stemOneRight.body.setRectangle(42, 10)
+    stemOneRight.body.setCollisionGroup(stemCollisionGroup)
+    stemOneRight.body.collides([dropCollisionGroup, stemCollisionGroup])
+    game.physics.p2.enable(stemOneRight)
+    stemOneRight.body.kinematic = true
+    stemOneRight.anchor.setTo(0.5, 0.5)
+
+  /* Leafs */
+    leafs = game.add.group()
+    game.world.sendToBack(leafs)
+
+    leafOne = leafs.create(312.5, 240, 'leaf')
+    leafOne.name = 'leafOne'
+    leafOne.inputEnabled = true
+
+  /* Clouds */
+    clouds = game.add.group()
+    clouds.enableBody = true
+    game.world.bringToTop(clouds)
+
+    cloud = clouds.create(200, 0, 'cloud')
+    cloud.inputEnabled = true
+    cloud.input.enableDrag(true)
+
+  /* Event Listeners */
+    leafOne.events.onInputDown.add(selectLeaf, this)
+    leafOne.events.onInputUp.add(resetSelectLeaf)
+
+  }
+
+  function update() {
+
+    // Timer for spawning drops
+    if (game.time.now > dropTimer) spawnDrop()
+
+    if (game.input.activePointer.isDown && curLeafSelected) {
+      stems.forEach(stem => {
+        if (stem.name.includes(curLeafSelected.name)) selectedStemArr.push(stem)
+      })
+      rotateLeaf(selectedStemArr)
+    }
+
+  }
+
+  function render() {
+
+  }
+
+  function spawnDrop() {
+
+    cloudArr = []
+
+    clouds.forEach(cloud => {
+      cloudArr.push(cloud)
     })
 
-    let clouds
-    let cloud
-    let cloudArr = []
-    let leafPad
-    let leafPads
-    let leaf
-    let leaf2
-    let dot
-    let dots
-    let dotCollisionGroup
-    let leafCollisionGroup
-    let dotTimer = 0
-    let dragging = false
-    let curPadClicked = null
-    let leafToRotate
-    let leafArr = []
+    drop = drops.getFirstExists(false)
 
-    function preload() {
+    if (drop) {
+      let random = game.rnd.integerInRange(0, cloudArr.length-1)
+      let randomX = game.rnd.integerInRange(30, 85)
 
-        game.input.maxPointers = 1
+      let randoCloud = cloudArr[random]
 
-        game.load.image('dot', '../assets/blue_circle.png')
-        game.load.image('leaf', '../assets/leaf.png')
-        game.load.image('leafPad', '../assets/leaf_pad.png')
-        game.load.image('cloud', '../assets/cloud.png')
+      drop.body.setCircle(12.5)
+      drop.body.setCollisionGroup(dropCollisionGroup)
+      drop.body.collides([stemCollisionGroup])
+      game.physics.p2.enable(drop)
 
+      drop.reset(randoCloud.body.x + randomX, randoCloud.body.y + 30)
+
+      dropTimer = game.time.now + 2000
     }
 
-    function create() {
+  }
 
-        game.physics.startSystem(Phaser.Physics.P2JS)
-        game.stage.backgroundColor = '#DCDCDC'
+  function rotateLeaf(stemArr) {
+    let targetAngle
+    let anchor
 
-        game.physics.p2.setImpactEvents(true)
+    stemArr.forEach(stem => {
 
-        game.physics.p2.restitution = 0.7
-        game.physics.p2.gravity.y = 300
-
-        dotCollisionGroup = game.physics.p2.createCollisionGroup()
-        leafCollisionGroup = game.physics.p2.createCollisionGroup()
-
-        game.physics.p2.updateBoundsCollisionGroup()
-
-    /* Dots */
-
-        dots = game.add.group()
-        dots.enableBody = true
-        dots.physicsBodyType = Phaser.Physics.P2JS
-        dots.createMultiple(30, 'dot')
-        dots.setAll('anchor.x', 0.5)
-        dots.setAll('anchor.y', 0.5)
-
-    /* leafs */
-
-        leafs = game.add.group()
-        leafPads = game.add.group()
-
-        leafs.enableBody = true
-        leafs.physicsBodyType = Phaser.Physics.P2JS
-
-        leaf = leafs.create(375, 300, 'leaf')
-        leaf.name = 'leaf'
-        leaf2 = leafs.create(200, 450, 'leaf')
-        leaf2.name = 'leaf2'
-        leafPad = leafPads.create(312.5, 240, 'leafPad')
-        leafPad.name = 'leaf'
-        leafPad2 = leafPads.create(137.5, 390, 'leafPad')
-        leafPad2.name = 'leaf2'
-
-        leafArr.push(leaf, leaf2)
-
-        game.world.sendToBack(leafPads)
-
-        leaf.body.setRectangle(125, 10)
-        leaf2.body.setRectangle(125, 10)
-
-        leaf.body.setCollisionGroup(leafCollisionGroup)
-        leaf2.body.setCollisionGroup(leafCollisionGroup)
-
-        leaf.body.collides([dotCollisionGroup, leafCollisionGroup])
-        leaf2.body.collides([dotCollisionGroup, leafCollisionGroup])
-
-        game.physics.p2.enable(leaf)
-        game.physics.p2.enable(leaf2)
-
-        leaf.body.kinematic = true
-        leaf2.body.kinematic = true
-
-        leaf.anchor.setTo(0.5, 0.5)
-        leaf2.anchor.setTo(0.5, 0.5)
-
-    /* Clouds */
-        
-        clouds = game.add.group()
-        clouds.enableBody = true
-
-        cloud = clouds.create(0, 0, 'cloud')
-        game.world.bringToTop(clouds)
-
-        cloud.inputEnabled = true
-
-        cloud.input.enableDrag(true)
-
-    /* Event Listeners */
-
-        leafPad.inputEnabled = true
-        leafPad2.inputEnabled = true
-
-        leafPad.events.onInputDown.add(recordClick, this)
-        leafPad.events.onInputUp.add(resetClick)
-
-        leafPad2.events.onInputDown.add(recordClick, this)
-        leafPad2.events.onInputUp.add(resetClick)
-
-        // Listeners with Tone
-        leaf.body.onBeginContact.add(() => playNote('C3'))
-        leaf2.body.onBeginContact.add(() => playNote('A3'))
-    }
-
-    function update() {
-
-        if (game.time.now > dotTimer) spawnDot()
-
-        if (game.input.activePointer.isDown && curPadClicked) {
-            leafToRotate = leafArr.find((leaf) => {
-                return leaf.name === curPadClicked.name
-            })
-            rotateLeaf(leafToRotate)
-        }
-
-    }
-
-    function render() {
-
-    }
-
-    function spawnDot() {
-
-        cloudArr.length = 0
-
-        clouds.forEach((cloud) => {
-            cloudArr.push(cloud)
-        })
-
-        console.log(cloudArr)
-
-        dot = dots.getFirstExists(false)    
-    
-        if (dot) {
-
-            let random = game.rnd.integerInRange(0,cloudArr.length-1)
-            let randomX = game.rnd.integerInRange(30, 85)
-
-            let randoCloud = cloudArr[random]
-
-            dot.body.setCircle(12.5)
-    
-            dot.body.setCollisionGroup(dotCollisionGroup)
-        
-            dot.body.collides([leafCollisionGroup])
-        
-            game.physics.p2.enable(dot)
-            
-            dot.reset(randoCloud.body.x + randomX, randoCloud.body.y + 30)
-
-            dotTimer = game.time.now + 2000
-        }
-    }
-
-    function rotateLeaf(curLeaf) {
-
-        let targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
-            curLeaf.x, curLeaf.y,
-            game.input.activePointer.x, game.input.activePointer.y
+      if (stem.name.includes('stemAnchor')) {
+        anchor = stem
+        targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
+          stem.x, stem.y,
+          game.input.activePointer.x, game.input.activePointer.y
         ) + 90
 
         if (targetAngle < 0) targetAngle += 360
@@ -187,39 +195,28 @@ window.onload = function() {
 
         if (!game.input.activePointer.isDown && dragging) dragging = false
 
-        if (dragging) curLeaf.body.angle = targetAngle
-    }
+        if (dragging) {
+          stem.body.angle = targetAngle
+        }
+      }
+      if (!stem.name.includes('stemAnchor')) {
+        stem.reset(anchor.body.x, anchor.body.y)
+        stem.body.angle = anchor.body.angle
+      }
+    })
 
-    function recordClick(leafPad) {
+  }
 
-        curPadClicked = leafPad
+  function selectLeaf(leaf) {
 
-    }
+    curLeafSelected = leaf
 
-    function resetClick() {
+  }
 
-        curPadClicked = null
+  function resetSelectLeaf() {
 
-    }
+    curLeafSelected = null
 
-}
+  }
 
-/* TONE JS */
-
-const synth = new Tone.PolySynth(4, Tone.Synth, {
-    "oscillator" : {
-        "partials" : [0, 2, 3, 4]
-    },
-    "envelope" : {
-        "attack" : 0.01,
-        "decay" : 0.2,
-        "sustain" : 0.02,
-        "release" : 0.02,
-    }
-}).toMaster()
-
-synth.set("volume", -5)
-
-function playNote (note) {
-    synth.triggerAttackRelease(note, .5)
 }
