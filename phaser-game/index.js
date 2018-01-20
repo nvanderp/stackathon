@@ -15,7 +15,9 @@ window.onload = function() {
   let curLeafSelected = null
 
   // Stem variables
-  let stems, stemOneAnchor, stemOneLeft, stemOneMiddle, stemOneRight
+  let stems
+  let stemOneAnchor, stemOneLeft, stemOneMiddle, stemOneRight
+  let stemTwoAnchor, stemTwoLeft, stemTwoMiddle, stemTwoRight
   let selectedStemArr = []
   let stemCollisionGroup
   let stemsToRotate
@@ -76,7 +78,8 @@ window.onload = function() {
     stems.enableBody = true
     stems.physicsBodyType = Phaser.Physics.P2JS
 
-    stemOneAnchor = stems.create(375, 300)
+    // StemOne
+    stemOneAnchor = stems.create(535, 300)
     stemOneAnchor.name = 'leafOne stemAnchor'
     game.physics.p2.enable(stemOneAnchor)
     stemOneAnchor.body.kinematic = true
@@ -109,13 +112,53 @@ window.onload = function() {
     stemOneRight.body.kinematic = true
     stemOneRight.anchor.setTo(0.5, 0.5)
 
+    // StemTwo
+    stemTwoAnchor = stems.create(335, 300)
+    stemTwoAnchor.name = 'leafTwo stemAnchor'
+    game.physics.p2.enable(stemTwoAnchor)
+    stemTwoAnchor.body.kinematic = true
+    stemTwoAnchor.anchor.setTo(0.5, 0.5)
+
+    stemTwoLeft = stems.create(stemTwoAnchor.x, stemTwoAnchor.y, 'stemLeft')
+    stemTwoLeft.name = 'leafTwo stem stemLeft'
+    stemTwoLeft.body.setRectangle(41.5, 10, -41.5)
+    stemTwoLeft.body.setCollisionGroup(stemCollisionGroup)
+    stemTwoLeft.body.collides([dropCollisionGroup, stemCollisionGroup])
+    game.physics.p2.enable(stemTwoLeft)
+    stemTwoLeft.body.kinematic = true
+    stemTwoLeft.anchor.setTo(0.5, 0.5)
+
+    stemTwoMiddle = stems.create(stemTwoAnchor.x, stemTwoAnchor.y, 'stemMiddle')
+    stemTwoMiddle.name = 'leafTwo stem stemMiddle'
+    stemTwoMiddle.body.setRectangle(41.5, 10) // 42, 10
+    stemTwoMiddle.body.setCollisionGroup(stemCollisionGroup)
+    stemTwoMiddle.body.collides([dropCollisionGroup, stemCollisionGroup])
+    game.physics.p2.enable(stemTwoMiddle)
+    stemTwoMiddle.body.kinematic = true
+    stemTwoMiddle.anchor.setTo(0.5, 0.5)
+
+    stemTwoRight = stems.create(stemTwoAnchor.x, stemTwoAnchor.y, 'stemRight')
+    stemTwoRight.name = 'leafTwo stem stemRight'
+    stemTwoRight.body.setRectangle(41.5, 10, 41.5)
+    stemTwoRight.body.setCollisionGroup(stemCollisionGroup)
+    stemTwoRight.body.collides([dropCollisionGroup, stemCollisionGroup])
+    game.physics.p2.enable(stemTwoRight)
+    stemTwoRight.body.kinematic = true
+    stemTwoRight.anchor.setTo(0.5, 0.5)
+
   /* Leafs */
     leafs = game.add.group()
     game.world.sendToBack(leafs)
 
-    leafOne = leafs.create(312.5, 240, 'leaf')
+    // leafOne
+    leafOne = leafs.create(stemOneAnchor.body.x - 62.5, stemOneAnchor.body.y - 60, 'leaf')
     leafOne.name = 'leafOne'
     leafOne.inputEnabled = true
+
+    // leafTwo
+    leafTwo = leafs.create(stemTwoAnchor.body.x - 62.5, stemTwoAnchor.body.y - 60, 'leaf')
+    leafTwo.name = 'leafTwo'
+    leafTwo.inputEnabled = true
 
   /* Clouds */
     clouds = game.add.group()
@@ -130,13 +173,17 @@ window.onload = function() {
     leafOne.events.onInputDown.add(selectLeaf, this)
     leafOne.events.onInputUp.add(resetSelectLeaf)
 
+    leafTwo.events.onInputDown.add(selectLeaf, this)
+    leafTwo.events.onInputUp.add(resetSelectLeaf)
+
     // Listners with Tone
     stemOneLeft.body.onBeginContact.add(() => playNote('C4'))
     stemOneMiddle.body.onBeginContact.add(() => playNote('C3'))
     stemOneRight.body.onBeginContact.add(() => playNote('C2'))
 
-  /* Pivot Points */
-    let constraint = game.physics.p2.createLockConstraint(stemOneMiddle, stemOneRight, [42, 0], 0)
+    stemTwoLeft.body.onBeginContact.add(() => playNote('A4'))
+    stemTwoMiddle.body.onBeginContact.add(() => playNote('A3'))
+    stemTwoRight.body.onBeginContact.add(() => playNote('A2'))
 
   }
 
@@ -145,11 +192,13 @@ window.onload = function() {
     // Timer for spawning drops
     if (game.time.now > dropTimer) spawnDrop()
 
+    // Clicking and rotating leaves
     if (game.input.activePointer.isDown && curLeafSelected) {
       stems.forEach(stem => {
         if (stem.name.includes(curLeafSelected.name)) selectedStemArr.push(stem)
       })
       rotateLeaf(selectedStemArr)
+      selectedStemArr = []
     }
 
   }
@@ -170,7 +219,7 @@ window.onload = function() {
 
     if (drop) {
       let random = game.rnd.integerInRange(0, cloudArr.length-1)
-      let randomX = game.rnd.integerInRange(30, 85)
+      let randomX = game.rnd.integerInRange(30, 95)
 
       let randoCloud = cloudArr[random]
 
