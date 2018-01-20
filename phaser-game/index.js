@@ -12,7 +12,7 @@ window.onload = function() {
   let cloudBounds
 
   // Leaf variables
-  let leafs, leafOne, leafTwo, leafThree, leafFour
+  let leafs, leafOne, leafTwo, leafThree, leafFour, leafFive, leafSix
   let curLeafSelected = null
 
   // Stem variables
@@ -21,6 +21,7 @@ window.onload = function() {
   let stemTwoAnchor, stemTwoLeft, stemTwoMiddle, stemTwoRight
   let stemThreeAnchor, stemThreeLeft, stemThreeMiddle, stemThreeRight
   let stemFourAnchor, stemFourLeft, stemFourMiddle, stemFourRight
+  let stemFiveAnchor, stemFiveLeft, stemFiveMiddle, stemFiveRight
   let selectedStemArr = []
   let stemCollisionGroup
   let stemsToRotate
@@ -217,6 +218,74 @@ window.onload = function() {
     stemFourRight.body.kinematic = true
     stemFourRight.anchor.setTo(0.5, 0.5)
 
+    // StemFive
+    stemFiveAnchor = stems.create(150, 400)
+    stemFiveAnchor.name = 'leafFive stemAnchor'
+    game.physics.p2.enable(stemFiveAnchor)
+    stemFiveAnchor.body.kinematic = true
+    stemFiveAnchor.anchor.setTo(0.5, 0.5)
+
+    stemFiveLeft = stems.create(stemFiveAnchor.x, stemFiveAnchor.y, 'stemLeft')
+    stemFiveLeft.name = 'leafFive stem stemLeft'
+    stemFiveLeft.body.setRectangle(41.5, 10, -41.5)
+    stemFiveLeft.body.setCollisionGroup(stemCollisionGroup)
+    stemFiveLeft.body.collides([dropCollisionGroup, stemCollisionGroup])
+    game.physics.p2.enable(stemFiveLeft)
+    stemFiveLeft.body.kinematic = true
+    stemFiveLeft.anchor.setTo(0.5, 0.5)
+
+    stemFiveMiddle = stems.create(stemFiveAnchor.x, stemFiveAnchor.y, 'stemMiddle')
+    stemFiveMiddle.name = 'leafFive stem stemMiddle'
+    stemFiveMiddle.body.setRectangle(41.5, 10) // 42, 10
+    stemFiveMiddle.body.setCollisionGroup(stemCollisionGroup)
+    stemFiveMiddle.body.collides([dropCollisionGroup, stemCollisionGroup])
+    game.physics.p2.enable(stemFiveMiddle)
+    stemFiveMiddle.body.kinematic = true
+    stemFiveMiddle.anchor.setTo(0.5, 0.5)
+
+    stemFiveRight = stems.create(stemFiveAnchor.x, stemFiveAnchor.y, 'stemRight')
+    stemFiveRight.name = 'leafFive stem stemRight'
+    stemFiveRight.body.setRectangle(41.5, 10, 41.5)
+    stemFiveRight.body.setCollisionGroup(stemCollisionGroup)
+    stemFiveRight.body.collides([dropCollisionGroup, stemCollisionGroup])
+    game.physics.p2.enable(stemFiveRight)
+    stemFiveRight.body.kinematic = true
+    stemFiveRight.anchor.setTo(0.5, 0.5)
+
+    // StemSix
+    stemSixAnchor = stems.create(660, 400)
+    stemSixAnchor.name = 'leafSix stemAnchor'
+    game.physics.p2.enable(stemSixAnchor)
+    stemSixAnchor.body.kinematic = true
+    stemSixAnchor.anchor.setTo(0.5, 0.5)
+
+    stemSixLeft = stems.create(stemSixAnchor.x, stemSixAnchor.y, 'stemLeft')
+    stemSixLeft.name = 'leafSix stem stemLeft'
+    stemSixLeft.body.setRectangle(41.5, 10, -41.5)
+    stemSixLeft.body.setCollisionGroup(stemCollisionGroup)
+    stemSixLeft.body.collides([dropCollisionGroup, stemCollisionGroup])
+    game.physics.p2.enable(stemSixLeft)
+    stemSixLeft.body.kinematic = true
+    stemSixLeft.anchor.setTo(0.5, 0.5)
+
+    stemSixMiddle = stems.create(stemSixAnchor.x, stemSixAnchor.y, 'stemMiddle')
+    stemSixMiddle.name = 'leafSix stem stemMiddle'
+    stemSixMiddle.body.setRectangle(41.5, 10) // 42, 10
+    stemSixMiddle.body.setCollisionGroup(stemCollisionGroup)
+    stemSixMiddle.body.collides([dropCollisionGroup, stemCollisionGroup])
+    game.physics.p2.enable(stemSixMiddle)
+    stemSixMiddle.body.kinematic = true
+    stemSixMiddle.anchor.setTo(0.5, 0.5)
+
+    stemSixRight = stems.create(stemSixAnchor.x, stemSixAnchor.y, 'stemRight')
+    stemSixRight.name = 'leafSix stem stemRight'
+    stemSixRight.body.setRectangle(41.5, 10, 41.5)
+    stemSixRight.body.setCollisionGroup(stemCollisionGroup)
+    stemSixRight.body.collides([dropCollisionGroup, stemCollisionGroup])
+    game.physics.p2.enable(stemSixRight)
+    stemSixRight.body.kinematic = true
+    stemSixRight.anchor.setTo(0.5, 0.5)
+
   /* Leafs */
     leafs = game.add.group()
     game.world.sendToBack(leafs)
@@ -240,6 +309,16 @@ window.onload = function() {
     leafFour = leafs.create(stemFourAnchor.body.x - 62.5, stemFourAnchor.body.y - 60, 'leaf')
     leafFour.name = 'leafFour'
     leafFour.inputEnabled = true
+
+    // leafFive
+    leafFive = leafs.create(stemFiveAnchor.body.x - 62.5, stemFiveAnchor.body.y - 60, 'leaf')
+    leafFive.name = 'leafFive'
+    leafFive.inputEnabled = true
+
+    // leafSix
+    leafSix = leafs.create(stemSixAnchor.body.x - 62.5, stemSixAnchor.body.y - 60, 'leaf')
+    leafSix.name = 'leafSix'
+    leafSix.inputEnabled = true
 
   /* Clouds */
     clouds = game.add.group()
@@ -274,6 +353,12 @@ window.onload = function() {
     leafFour.events.onInputDown.add(selectLeaf, this)
     leafFour.events.onInputUp.add(resetSelectLeaf)
 
+    leafFive.events.onInputDown.add(selectLeaf, this)
+    leafFive.events.onInputUp.add(resetSelectLeaf)
+
+    leafSix.events.onInputDown.add(selectLeaf, this)
+    leafSix.events.onInputUp.add(resetSelectLeaf)
+
     // Listners with Tone
     stemOneLeft.body.onBeginContact.add(() => playNote('C4'))
     stemOneMiddle.body.onBeginContact.add(() => playNote('C3'))
@@ -290,6 +375,14 @@ window.onload = function() {
     stemFourLeft.body.onBeginContact.add(() => playNote('G4'))
     stemFourMiddle.body.onBeginContact.add(() => playNote('G3'))
     stemFourRight.body.onBeginContact.add(() => playNote('G2'))
+
+    stemFiveLeft.body.onBeginContact.add(() => playNote('B4'))
+    stemFiveMiddle.body.onBeginContact.add(() => playNote('B3'))
+    stemFiveRight.body.onBeginContact.add(() => playNote('B2'))
+
+    stemSixLeft.body.onBeginContact.add(() => playNote('F4'))
+    stemSixMiddle.body.onBeginContact.add(() => playNote('F3'))
+    stemSixRight.body.onBeginContact.add(() => playNote('F2'))
 
   }
 
