@@ -5,6 +5,8 @@ window.onload = function() {
         preload: preload, create: create, update: update, render: render
     })
 
+    let clouds
+    let cloud
     let leafPad
     let leafPads
     let leaf
@@ -26,6 +28,7 @@ window.onload = function() {
         game.load.image('dot', '../assets/blue_circle.png')
         game.load.image('leaf', '../assets/leaf.png')
         game.load.image('leafPad', '../assets/leaf_pad.png')
+        game.load.image('cloud', '../assets/cloud.png')
 
     }
 
@@ -92,6 +95,18 @@ window.onload = function() {
         leaf.anchor.setTo(0.5, 0.5)
         leaf2.anchor.setTo(0.5, 0.5)
 
+    /* Clouds */
+        
+        clouds = game.add.group()
+        clouds.enableBody = true
+
+        cloud = clouds.create(0, 0, 'cloud')
+        game.world.bringToTop(clouds)
+
+        cloud.inputEnabled = true
+
+        cloud.input.enableDrag(true)
+
     /* Event Listeners */
 
         leafPad.inputEnabled = true
@@ -102,6 +117,8 @@ window.onload = function() {
 
         leafPad2.events.onInputDown.add(recordClick, this)
         leafPad2.events.onInputUp.add(resetClick)
+
+        // Point of contact
 
         // Listeners with Tone
         leaf.body.onBeginContact.add(() => playNote('C3'))
@@ -191,7 +208,7 @@ const synth = new Tone.PolySynth(4, Tone.Synth, {
     }
 }).toMaster()
 
-synth.set("volume", -10)
+synth.set("volume", -5)
 
 function playNote (note) {
     synth.triggerAttackRelease(note, .5)
