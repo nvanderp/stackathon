@@ -4,6 +4,9 @@ window.onload = function() {
   const game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
     preload: preload, create: create, update: update, render: render
   })
+  
+  // Background Elements
+  let backgroundElements, backgroundImage
 
   // Game World Wall variables
   let wallLeft, wallRight, floor
@@ -62,6 +65,7 @@ window.onload = function() {
     game.load.image('floor', '../assets/bottomWall.png')
     game.load.image('water', '../assets/water.png')
     game.load.image('tree', '../assets/tree.png')
+    game.load.image('background', '../assets/background.png')
 
   }
 
@@ -75,8 +79,10 @@ window.onload = function() {
     game.physics.p2.restitution = 0.6
     game.physics.p2.gravity.y = 300
 
-    // Stage Background settings
-    game.stage.backgroundColor = '#DCDCDC'
+    // Stage Background settings/elements
+    backgroundElements = game.add.group()
+    backgroundImage = backgroundElements.create(0, 0, 'background')
+    game.world.sendToBack(backgroundImage)
 
     // Collision Groups
     dropCollisionGroup = game.physics.p2.createCollisionGroup()
@@ -125,14 +131,6 @@ window.onload = function() {
     game.physics.p2.enable(rightWall)
     rightWall.body.kinematic = true
     rightWall.anchor.setTo(0.5, 0.5)
-
-
-  /* Water */
-    waterBounds = game.add.group()
-    waterBounds.enableBody = true
-
-    water = waterBounds.create(400, 585, 'water')
-    water.anchor.setTo(0.5, 0.5)
 
   /* Drops */
     drops = game.add.group()
@@ -352,9 +350,20 @@ window.onload = function() {
     stemSixRight.body.kinematic = true
     stemSixRight.anchor.setTo(0.5, 0.5)
 
+  /* Trees */
+    trees = game.add.group()
+    // game.world.sendToBack(trees)
+
+    treeOne = trees.create(stemOneAnchor.body.x - 40, stemOneAnchor.body.y + 65, 'tree')        
+    treeTwo = trees.create(stemTwoAnchor.body.x - 40, stemTwoAnchor.body.y + 50, 'tree')    
+    treeThree = trees.create(stemThreeAnchor.body.x - 40, stemThreeAnchor.body.y, 'tree')
+    treeFour = trees.create(stemFourAnchor.body.x - 40, stemFourAnchor.body.y, 'tree')
+    treeFive = trees.create(stemFiveAnchor.body.x - 40, stemFiveAnchor.body.y + 20, 'tree')
+    treeSix = trees.create(stemSixAnchor.body.x - 40, stemSixAnchor.body.y + 10, 'tree')
+
   /* Leafs */
     leafs = game.add.group()
-    game.world.sendToBack(leafs)
+    // game.world.sendToBack(leafs)
 
     // leafOne
     leafOne = leafs.create(stemOneAnchor.body.x - 62.5, stemOneAnchor.body.y - 60, 'leaf')
@@ -386,16 +395,12 @@ window.onload = function() {
     leafSix.name = 'leafSix'
     leafSix.inputEnabled = true
 
-  /* Trees */
-    trees = game.add.group()
-    game.world.sendToBack(trees)
+  /* Water */
+    waterBounds = game.add.group()
+    waterBounds.enableBody = true
 
-    treeOne = trees.create(stemOneAnchor.body.x - 40, stemOneAnchor.body.y + 65, 'tree')        
-    treeTwo = trees.create(stemTwoAnchor.body.x - 40, stemTwoAnchor.body.y + 50, 'tree')    
-    treeThree = trees.create(stemThreeAnchor.body.x - 40, stemThreeAnchor.body.y, 'tree')
-    treeFour = trees.create(stemFourAnchor.body.x - 40, stemFourAnchor.body.y, 'tree')
-    treeFive = trees.create(stemFiveAnchor.body.x - 40, stemFiveAnchor.body.y + 20, 'tree')
-    treeSix = trees.create(stemSixAnchor.body.x - 40, stemSixAnchor.body.y + 10, 'tree')
+    water = waterBounds.create(400, 585, 'water')
+    water.anchor.setTo(0.5, 0.5)
 
   /* Clouds */
     clouds = game.add.group()
@@ -431,6 +436,11 @@ window.onload = function() {
     cloudThree.inputEnabled = true
     cloudThree.input.enableDrag(true)
     cloudThree.input.boundsRect = cloudBounds
+
+    // Z-Axis Stuff
+    game.world.bringToTop(stems)
+    game.world.bringToTop(drops)
+    game.world.bringToTop(clouds)
 
   /* Event Listeners */
     // Leafs
