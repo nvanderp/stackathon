@@ -4,6 +4,9 @@ window.onload = function() {
   const game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
     preload: preload, create: create, update: update, render: render
   })
+  
+  // Background Elements
+  let backgroundElements, backgroundImage
 
   // Game World Wall variables
   let wallLeft, wallRight, floor
@@ -21,6 +24,9 @@ window.onload = function() {
   // Leaf variables
   let leafs, leafOne, leafTwo, leafThree, leafFour, leafFive, leafSix
   let curLeafSelected = null
+
+  // Tree variables
+  let trees, treeOne, treeTwo, treeThree, treeFour, treeFive, treeSix
 
   // Stem variables
   let stems
@@ -58,6 +64,8 @@ window.onload = function() {
     game.load.image('LRWall', '../assets/LRWall.png')
     game.load.image('floor', '../assets/bottomWall.png')
     game.load.image('water', '../assets/water.png')
+    game.load.image('tree', '../assets/tree.png')
+    game.load.image('background', '../assets/background.png')
 
   }
 
@@ -71,8 +79,10 @@ window.onload = function() {
     game.physics.p2.restitution = 0.6
     game.physics.p2.gravity.y = 300
 
-    // Stage Background settings
-    game.stage.backgroundColor = '#DCDCDC'
+    // Stage Background settings/elements
+    backgroundElements = game.add.group()
+    backgroundImage = backgroundElements.create(0, 0, 'background')
+    game.world.sendToBack(backgroundImage)
 
     // Collision Groups
     dropCollisionGroup = game.physics.p2.createCollisionGroup()
@@ -121,14 +131,6 @@ window.onload = function() {
     game.physics.p2.enable(rightWall)
     rightWall.body.kinematic = true
     rightWall.anchor.setTo(0.5, 0.5)
-
-
-  /* Water */
-    waterBounds = game.add.group()
-    waterBounds.enableBody = true
-
-    water = waterBounds.create(400, 585, 'water')
-    water.anchor.setTo(0.5, 0.5)
 
   /* Drops */
     drops = game.add.group()
@@ -213,7 +215,7 @@ window.onload = function() {
     stemTwoRight.anchor.setTo(0.5, 0.5)
 
     // StemThree
-    stemThreeAnchor = stems.create(505, 450)
+    stemThreeAnchor = stems.create(525, 450)
     stemThreeAnchor.name = 'leafThree stemAnchor'
     game.physics.p2.enable(stemThreeAnchor)
     stemThreeAnchor.body.kinematic = true
@@ -348,39 +350,66 @@ window.onload = function() {
     stemSixRight.body.kinematic = true
     stemSixRight.anchor.setTo(0.5, 0.5)
 
+  /* Trees */
+    trees = game.add.group()
+    // game.world.sendToBack(trees)
+
+    treeOne = trees.create(stemOneAnchor.body.x - 40, stemOneAnchor.body.y + 65, 'tree')        
+    treeTwo = trees.create(stemTwoAnchor.body.x - 40, stemTwoAnchor.body.y + 50, 'tree')    
+    treeThree = trees.create(stemThreeAnchor.body.x - 40, stemThreeAnchor.body.y, 'tree')
+    treeFour = trees.create(stemFourAnchor.body.x - 40, stemFourAnchor.body.y, 'tree')
+    treeFive = trees.create(stemFiveAnchor.body.x - 40, stemFiveAnchor.body.y + 20, 'tree')
+    treeSix = trees.create(stemSixAnchor.body.x - 40, stemSixAnchor.body.y + 10, 'tree')
+
   /* Leafs */
     leafs = game.add.group()
-    game.world.sendToBack(leafs)
+    // game.world.sendToBack(leafs)
 
     // leafOne
     leafOne = leafs.create(stemOneAnchor.body.x - 62.5, stemOneAnchor.body.y - 60, 'leaf')
     leafOne.name = 'leafOne'
     leafOne.inputEnabled = true
+    leafOne.input.useHandCursor = true
 
     // leafTwo
     leafTwo = leafs.create(stemTwoAnchor.body.x - 62.5, stemTwoAnchor.body.y - 60, 'leaf')
     leafTwo.name = 'leafTwo'
     leafTwo.inputEnabled = true
+    leafTwo.input.useHandCursor = true
 
     // leafThree
     leafThree = leafs.create(stemThreeAnchor.body.x - 62.5, stemThreeAnchor.body.y - 60, 'leaf')
     leafThree.name = 'leafThree'
     leafThree.inputEnabled = true
+    leafThree.input.useHandCursor = true
 
     // leafFour
     leafFour = leafs.create(stemFourAnchor.body.x - 62.5, stemFourAnchor.body.y - 60, 'leaf')
     leafFour.name = 'leafFour'
     leafFour.inputEnabled = true
+    leafFour.input.useHandCursor = true
+
 
     // leafFive
     leafFive = leafs.create(stemFiveAnchor.body.x - 62.5, stemFiveAnchor.body.y - 60, 'leaf')
     leafFive.name = 'leafFive'
     leafFive.inputEnabled = true
+    leafFive.input.useHandCursor = true
+
 
     // leafSix
     leafSix = leafs.create(stemSixAnchor.body.x - 62.5, stemSixAnchor.body.y - 60, 'leaf')
     leafSix.name = 'leafSix'
     leafSix.inputEnabled = true
+    leafSix.input.useHandCursor = true
+    
+
+  /* Water */
+    waterBounds = game.add.group()
+    waterBounds.enableBody = true
+
+    water = waterBounds.create(400, 585, 'water')
+    water.anchor.setTo(0.5, 0.5)
 
   /* Clouds */
     clouds = game.add.group()
@@ -396,6 +425,7 @@ window.onload = function() {
     cloudOne = clouds.create(randomCloudStartX, randomCloudStartY, 'cloudAnim')
     cloudOne.name = 'cloudOne'
     cloudOne.inputEnabled = true
+    cloudOne.input.useHandCursor = true
     cloudOne.input.enableDrag(true)
     cloudOne.input.boundsRect = cloudBounds
 
@@ -405,6 +435,7 @@ window.onload = function() {
     cloudTwo = clouds.create(randomCloudStartX, randomCloudStartY, 'cloudAnim')
     cloudTwo.name = 'cloudTwo'
     cloudTwo.inputEnabled = true
+    cloudTwo.input.useHandCursor = true
     cloudTwo.input.enableDrag(true)
     cloudTwo.input.boundsRect = cloudBounds
 
@@ -414,8 +445,14 @@ window.onload = function() {
     cloudThree = clouds.create(randomCloudStartX, randomCloudStartY, 'cloudAnim')
     cloudThree.name = 'cloudThree'
     cloudThree.inputEnabled = true
+    cloudThree.input.useHandCursor = true
     cloudThree.input.enableDrag(true)
     cloudThree.input.boundsRect = cloudBounds
+
+    // Z-Axis Stuff
+    game.world.bringToTop(stems)
+    game.world.bringToTop(drops)
+    game.world.bringToTop(clouds)
 
   /* Event Listeners */
     // Leafs
