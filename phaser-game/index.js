@@ -369,31 +369,40 @@ window.onload = function() {
     leafOne = leafs.create(stemOneAnchor.body.x - 62.5, stemOneAnchor.body.y - 60, 'leaf')
     leafOne.name = 'leafOne'
     leafOne.inputEnabled = true
+    leafOne.input.useHandCursor = true
 
     // leafTwo
     leafTwo = leafs.create(stemTwoAnchor.body.x - 62.5, stemTwoAnchor.body.y - 60, 'leaf')
     leafTwo.name = 'leafTwo'
     leafTwo.inputEnabled = true
+    leafTwo.input.useHandCursor = true
 
     // leafThree
     leafThree = leafs.create(stemThreeAnchor.body.x - 62.5, stemThreeAnchor.body.y - 60, 'leaf')
     leafThree.name = 'leafThree'
     leafThree.inputEnabled = true
+    leafThree.input.useHandCursor = true
 
     // leafFour
     leafFour = leafs.create(stemFourAnchor.body.x - 62.5, stemFourAnchor.body.y - 60, 'leaf')
     leafFour.name = 'leafFour'
     leafFour.inputEnabled = true
+    leafFour.input.useHandCursor = true
+
 
     // leafFive
     leafFive = leafs.create(stemFiveAnchor.body.x - 62.5, stemFiveAnchor.body.y - 60, 'leaf')
     leafFive.name = 'leafFive'
     leafFive.inputEnabled = true
+    leafFive.input.useHandCursor = true
+
 
     // leafSix
     leafSix = leafs.create(stemSixAnchor.body.x - 62.5, stemSixAnchor.body.y - 60, 'leaf')
     leafSix.name = 'leafSix'
     leafSix.inputEnabled = true
+    leafSix.input.useHandCursor = true
+    
 
   /* Water */
     waterBounds = game.add.group()
@@ -416,6 +425,7 @@ window.onload = function() {
     cloudOne = clouds.create(randomCloudStartX, randomCloudStartY, 'cloudAnim')
     cloudOne.name = 'cloudOne'
     cloudOne.inputEnabled = true
+    cloudOne.input.useHandCursor = true
     cloudOne.input.enableDrag(true)
     cloudOne.input.boundsRect = cloudBounds
 
@@ -425,6 +435,7 @@ window.onload = function() {
     cloudTwo = clouds.create(randomCloudStartX, randomCloudStartY, 'cloudAnim')
     cloudTwo.name = 'cloudTwo'
     cloudTwo.inputEnabled = true
+    cloudTwo.input.useHandCursor = true
     cloudTwo.input.enableDrag(true)
     cloudTwo.input.boundsRect = cloudBounds
 
@@ -434,6 +445,7 @@ window.onload = function() {
     cloudThree = clouds.create(randomCloudStartX, randomCloudStartY, 'cloudAnim')
     cloudThree.name = 'cloudThree'
     cloudThree.inputEnabled = true
+    cloudThree.input.useHandCursor = true
     cloudThree.input.enableDrag(true)
     cloudThree.input.boundsRect = cloudBounds
 
