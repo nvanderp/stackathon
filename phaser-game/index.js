@@ -6,8 +6,9 @@ window.onload = function() {
   })
 
   // Cloud variables
-  let clouds, cloud, cloudTwo, cloudThree
+  let clouds, cloudOne, OneTwo, OneThree
   let cloudBounds
+  let curCloudSelected = null
 
   // Leaf variables
   let leafs, leafOne, leafTwo, leafThree, leafFour, leafFive, leafSix
@@ -45,6 +46,7 @@ window.onload = function() {
     game.load.image('stemMiddle', '../assets/stem_split.png')
     game.load.image('stemRight', '../assets/stem_right.png')
     game.load.image('drop', '../assets/blue_circle.png')
+    game.load.spritesheet('cloudAnim', '../assets/cloud_spritesheet.png', 125, 125, 3)
 
   }
 
@@ -331,16 +333,16 @@ window.onload = function() {
     // Cloud
     let randomCloudStartX = game.rnd.integerInRange(200, 350)
     let randomCloudStartY = game.rnd.integerInRange(0, 100)
-    cloud = clouds.create(randomCloudStartX, randomCloudStartY, 'cloud')
-    cloud.name = 'cloud'
-    cloud.inputEnabled = true
-    cloud.input.enableDrag(true)
-    cloud.input.boundsRect = cloudBounds
+    cloudOne = clouds.create(randomCloudStartX, randomCloudStartY, 'cloudAnim')
+    cloudOne.name = 'cloudOne'
+    cloudOne.inputEnabled = true
+    cloudOne.input.enableDrag(true)
+    cloudOne.input.boundsRect = cloudBounds
 
     // cloudTwo
     randomCloudStartX = game.rnd.integerInRange(400, 550)
     randomCloudStartY = game.rnd.integerInRange(0, 100)
-    cloudTwo = clouds.create(randomCloudStartX, randomCloudStartY, 'cloud')
+    cloudTwo = clouds.create(randomCloudStartX, randomCloudStartY, 'cloudAnim')
     cloudTwo.name = 'cloudTwo'
     cloudTwo.inputEnabled = true
     cloudTwo.input.enableDrag(true)
@@ -349,13 +351,14 @@ window.onload = function() {
     // cloudThree
     randomCloudStartX = game.rnd.integerInRange(0, 200)
     randomCloudStartY = game.rnd.integerInRange(0, 100)
-    cloudThree = clouds.create(randomCloudStartX, randomCloudStartY, 'cloud')
+    cloudThree = clouds.create(randomCloudStartX, randomCloudStartY, 'cloudAnim')
     cloudThree.name = 'cloudThree'
     cloudThree.inputEnabled = true
     cloudThree.input.enableDrag(true)
     cloudThree.input.boundsRect = cloudBounds
 
   /* Event Listeners */
+    // Leafs
     leafOne.events.onInputDown.add(selectLeaf, this)
     leafOne.events.onInputUp.add(resetSelectLeaf)
 
@@ -373,6 +376,16 @@ window.onload = function() {
 
     leafSix.events.onInputDown.add(selectLeaf, this)
     leafSix.events.onInputUp.add(resetSelectLeaf)
+
+    // Clouds
+    cloudOne.events.onInputDown.add(selectCloud, this)
+    cloudOne.events.onInputUp.add(resetSelectCloud)
+
+    cloudTwo.events.onInputDown.add(selectCloud, this)
+    cloudTwo.events.onInputUp.add(resetSelectCloud)
+
+    cloudThree.events.onInputDown.add(selectCloud, this)
+    cloudThree.events.onInputUp.add(resetSelectCloud)
 
     // Listners with Tone
     stemOneLeft.body.onBeginContact.add(() => playNote('C4'))
@@ -404,11 +417,28 @@ window.onload = function() {
   }
 
   function update() {
+  
 
     // Timer for spawning drops
-    if (game.time.now > dropTimerOne) spawnDrop(cloud)
+    if (game.time.now > dropTimerOne) spawnDrop(cloudOne)
+    else if (game.time.now < dropTimerOne && !curCloudSelected) {
+      cloudOne.frame = 0
+    }
     if (game.time.now > dropTimerTwo) spawnDrop(cloudTwo)
+    else if (game.time.now < dropTimerTwo && !curCloudSelected) {
+      cloudTwo.frame = 0
+    }
     if (game.time.now > dropTimerThree) spawnDrop(cloudThree)
+    else if (game.time.now < dropTimerThree && !curCloudSelected) {
+      cloudThree.frame = 0
+    }
+
+    if (game.input.activePointer.isDown && curCloudSelected) {
+      clouds.forEach(cloud => {
+        if (cloud.name.includes(curCloudSelected.name)) cloud.frame = 2
+      })
+    }
+
 
     // Clicking and rotating leaves
     if (game.input.activePointer.isDown && curLeafSelected) {
@@ -430,6 +460,7 @@ window.onload = function() {
     drop = drops.getFirstExists(false)
 
     if (drop) {
+      curCloud.frame = 1
       let randomX = game.rnd.integerInRange(30, 95)
 
       drop.body.setCircle(12.5)
@@ -441,7 +472,7 @@ window.onload = function() {
 
       let randoTimer = game.rnd.integerInRange(2500, 3500)
 
-      if (curCloud.name === 'cloud') dropTimerOne = game.time.now + randoTimer
+      if (curCloud.name === 'cloudOne') dropTimerOne = game.time.now + randoTimer
       if (curCloud.name === 'cloudTwo') dropTimerTwo = game.time.now + randoTimer
       if (curCloud.name === 'cloudThree') dropTimerThree = game.time.now + randoTimer
     }
@@ -514,6 +545,18 @@ window.onload = function() {
   function resetSelectLeaf() {
 
     curLeafSelected = null
+
+  }
+
+  function selectCloud(cloud) {
+
+    curCloudSelected = cloud
+
+  }
+
+  function resetSelectCloud() {
+
+    curCloudSelected = null
 
   }
 
