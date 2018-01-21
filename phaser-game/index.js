@@ -6,8 +6,7 @@ window.onload = function() {
   })
 
   // Cloud variables
-  let clouds, cloud, cloudTwo
-  let cloudArr = []
+  let clouds, cloud, cloudTwo, cloudThree
   let cloudBounds
 
   // Leaf variables
@@ -30,6 +29,7 @@ window.onload = function() {
   let dropCollisionGroup
   let dropTimerOne = 0
   let dropTimerTwo = 0
+  let dropTimerThree = 0
 
   // Global User variables
   let dragging = false
@@ -185,7 +185,7 @@ window.onload = function() {
     stemThreeRight.anchor.setTo(0.5, 0.5)
 
     // StemFour
-    stemFourAnchor = stems.create(310, 490)
+    stemFourAnchor = stems.create(350, 490)
     stemFourAnchor.name = 'leafFour stemAnchor'
     game.physics.p2.enable(stemFourAnchor)
     stemFourAnchor.body.kinematic = true
@@ -329,18 +329,31 @@ window.onload = function() {
     cloudBounds = new Phaser.Rectangle(0, 0, 800, 200)
 
     // Cloud
-    cloud = clouds.create(270, 0, 'cloud')
+    let randomCloudStartX = game.rnd.integerInRange(200, 350)
+    let randomCloudStartY = game.rnd.integerInRange(0, 100)
+    cloud = clouds.create(randomCloudStartX, randomCloudStartY, 'cloud')
     cloud.name = 'cloud'
     cloud.inputEnabled = true
     cloud.input.enableDrag(true)
     cloud.input.boundsRect = cloudBounds
 
     // cloudTwo
-    cloudTwo = clouds.create(425, 0, 'cloud')
+    randomCloudStartX = game.rnd.integerInRange(400, 550)
+    randomCloudStartY = game.rnd.integerInRange(0, 100)
+    cloudTwo = clouds.create(randomCloudStartX, randomCloudStartY, 'cloud')
     cloudTwo.name = 'cloudTwo'
     cloudTwo.inputEnabled = true
     cloudTwo.input.enableDrag(true)
     cloudTwo.input.boundsRect = cloudBounds
+
+    // cloudThree
+    randomCloudStartX = game.rnd.integerInRange(0, 200)
+    randomCloudStartY = game.rnd.integerInRange(0, 100)
+    cloudThree = clouds.create(randomCloudStartX, randomCloudStartY, 'cloud')
+    cloudThree.name = 'cloudThree'
+    cloudThree.inputEnabled = true
+    cloudThree.input.enableDrag(true)
+    cloudThree.input.boundsRect = cloudBounds
 
   /* Event Listeners */
     leafOne.events.onInputDown.add(selectLeaf, this)
@@ -395,6 +408,7 @@ window.onload = function() {
     // Timer for spawning drops
     if (game.time.now > dropTimerOne) spawnDrop(cloud)
     if (game.time.now > dropTimerTwo) spawnDrop(cloudTwo)
+    if (game.time.now > dropTimerThree) spawnDrop(cloudThree)
 
     // Clicking and rotating leaves
     if (game.input.activePointer.isDown && curLeafSelected) {
@@ -425,10 +439,11 @@ window.onload = function() {
 
       drop.reset(curCloud.body.x + randomX, curCloud.body.y + 30)
 
-      let randoTimer = game.rnd.integerInRange(1500, 3000)
+      let randoTimer = game.rnd.integerInRange(2500, 3500)
 
       if (curCloud.name === 'cloud') dropTimerOne = game.time.now + randoTimer
       if (curCloud.name === 'cloudTwo') dropTimerTwo = game.time.now + randoTimer
+      if (curCloud.name === 'cloudThree') dropTimerThree = game.time.now + randoTimer
     }
 
   }
