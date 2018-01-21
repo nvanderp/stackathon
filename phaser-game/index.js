@@ -117,7 +117,7 @@ window.onload = function() {
     stemOneRight.anchor.setTo(0.5, 0.5)
 
     // StemTwo
-    stemTwoAnchor = stems.create(335, 300)
+    stemTwoAnchor = stems.create(260, 320)
     stemTwoAnchor.name = 'leafTwo stemAnchor'
     game.physics.p2.enable(stemTwoAnchor)
     stemTwoAnchor.body.kinematic = true
@@ -185,7 +185,7 @@ window.onload = function() {
     stemThreeRight.anchor.setTo(0.5, 0.5)
 
     // StemFour
-    stemFourAnchor = stems.create(310, 450)
+    stemFourAnchor = stems.create(310, 490)
     stemFourAnchor.name = 'leafFour stemAnchor'
     game.physics.p2.enable(stemFourAnchor)
     stemFourAnchor.body.kinematic = true
@@ -384,6 +384,8 @@ window.onload = function() {
     stemSixMiddle.body.onBeginContact.add(() => playNote('F3'))
     stemSixRight.body.onBeginContact.add(() => playNote('F2'))
 
+    randomLeafStart(stems)
+
   }
 
   function update() {
@@ -456,6 +458,32 @@ window.onload = function() {
         if (dragging) {
           stem.body.angle = targetAngle
         }
+      }
+      if (stem.name.includes('stem')) {
+        stem.reset(anchor.body.x, anchor.body.y)
+        stem.body.angle = anchor.body.angle
+      }
+    })
+
+  }
+
+  function randomLeafStart(stems) {
+    let targetAngle
+    let anchor
+
+    stems.forEach(stem => {
+      let randomX = game.rnd.integerInRange(0, 800)
+      let randomXTwo = game.rnd.integerInRange(0, 800)
+      let randomY = game.rnd.integerInRange(0, 600)
+      let randomYTwo = game.rnd.integerInRange(0, 600)
+
+      if (stem.name.includes('stemAnchor')) {
+        anchor = stem
+        targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
+          randomX, randomY,
+          randomXTwo, randomYTwo
+        ) + 90
+        stem.body.angle = targetAngle
       }
       if (stem.name.includes('stem')) {
         stem.reset(anchor.body.x, anchor.body.y)
