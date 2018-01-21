@@ -5,6 +5,13 @@ window.onload = function() {
     preload: preload, create: create, update: update, render: render
   })
 
+  // Game World Wall variables
+  let wallLeft, wallRight, floor
+  let floorCollisionGroup
+
+  // Water variables
+  let waterBounds, water
+
   // Cloud variables
   let clouds, cloudOne, OneTwo, OneThree
   let cloudBounds
@@ -47,6 +54,9 @@ window.onload = function() {
     game.load.image('stemRight', '../assets/stem_right.png')
     game.load.image('drop', '../assets/blue_circle.png')
     game.load.spritesheet('cloudAnim', '../assets/cloud_spritesheet.png', 125, 125, 3)
+    game.load.image('LRWall', '../assets/LRWall.png')
+    game.load.image('floor', '../assets/bottomWall.png')
+    game.load.image('water', '../assets/water.png')
 
   }
 
@@ -67,8 +77,31 @@ window.onload = function() {
     dropCollisionGroup = game.physics.p2.createCollisionGroup()
     stemCollisionGroup = game.physics.p2.createCollisionGroup()
     cloudCollisionGroup = game.physics.p2.createCollisionGroup()
+    floorCollisionGroup = game.physics.p2.createCollisionGroup()
 
     game.physics.p2.updateBoundsCollisionGroup()
+
+  /* World Walls */
+    boundsEnd = game.add.group()
+    boundsEnd.enableBody = true
+    boundsEnd.physicsBodyType = Phaser.Physics.P2JS
+
+    // floor
+    floor = boundsEnd.create(400, 600, 'floor')
+    floor.name = 'floor'
+    floor.body.setRectangle(800, 4)
+    floor.body.setCollisionGroup(floorCollisionGroup)
+    floor.body.collides([dropCollisionGroup])
+    game.physics.p2.enable(floor)
+    floor.body.kinematic = true
+    floor.anchor.setTo(0.5, 0.5)
+
+  /* Water */
+    waterBounds = game.add.group()
+    waterBounds.enableBody = true
+
+    water = waterBounds.create(400, 585, 'water')
+    water.anchor.setTo(0.5, 0.5)
 
   /* Drops */
     drops = game.add.group()
@@ -465,7 +498,8 @@ window.onload = function() {
 
       drop.body.setCircle(12.5)
       drop.body.setCollisionGroup(dropCollisionGroup)
-      drop.body.collides([stemCollisionGroup])
+      drop.body.collides(stemCollisionGroup)   
+      drop.body.collides(floorCollisionGroup, hitFloor, this)
       game.physics.p2.enable(drop)
 
       drop.reset(curCloud.body.x + randomX, curCloud.body.y + 30)
@@ -475,8 +509,13 @@ window.onload = function() {
       if (curCloud.name === 'cloudOne') dropTimerOne = game.time.now + randoTimer
       if (curCloud.name === 'cloudTwo') dropTimerTwo = game.time.now + randoTimer
       if (curCloud.name === 'cloudThree') dropTimerThree = game.time.now + randoTimer
+
     }
 
+  }
+
+  function hitFloor(body1, body2) {
+    body1.destroy()
   }
 
   function rotateLeaf(stemArr) {
