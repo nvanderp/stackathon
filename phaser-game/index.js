@@ -22,6 +22,9 @@ window.onload = function() {
   let leafs, leafOne, leafTwo, leafThree, leafFour, leafFive, leafSix
   let curLeafSelected = null
 
+  // Tree variables
+  let trees, treeOne, treeTwo, treeThree, treeFour, treeFive, treeSix
+
   // Stem variables
   let stems
   let stemOneAnchor, stemOneLeft, stemOneMiddle, stemOneRight
@@ -58,6 +61,7 @@ window.onload = function() {
     game.load.image('LRWall', '../assets/LRWall.png')
     game.load.image('floor', '../assets/bottomWall.png')
     game.load.image('water', '../assets/water.png')
+    game.load.image('tree', '../assets/tree.png')
 
   }
 
@@ -213,7 +217,7 @@ window.onload = function() {
     stemTwoRight.anchor.setTo(0.5, 0.5)
 
     // StemThree
-    stemThreeAnchor = stems.create(505, 450)
+    stemThreeAnchor = stems.create(525, 450)
     stemThreeAnchor.name = 'leafThree stemAnchor'
     game.physics.p2.enable(stemThreeAnchor)
     stemThreeAnchor.body.kinematic = true
@@ -381,6 +385,17 @@ window.onload = function() {
     leafSix = leafs.create(stemSixAnchor.body.x - 62.5, stemSixAnchor.body.y - 60, 'leaf')
     leafSix.name = 'leafSix'
     leafSix.inputEnabled = true
+
+  /* Trees */
+    trees = game.add.group()
+    game.world.sendToBack(trees)
+
+    treeOne = trees.create(stemOneAnchor.body.x - 40, stemOneAnchor.body.y + 65, 'tree')        
+    treeTwo = trees.create(stemTwoAnchor.body.x - 40, stemTwoAnchor.body.y + 50, 'tree')    
+    treeThree = trees.create(stemThreeAnchor.body.x - 40, stemThreeAnchor.body.y, 'tree')
+    treeFour = trees.create(stemFourAnchor.body.x - 40, stemFourAnchor.body.y, 'tree')
+    treeFive = trees.create(stemFiveAnchor.body.x - 40, stemFiveAnchor.body.y + 20, 'tree')
+    treeSix = trees.create(stemSixAnchor.body.x - 40, stemSixAnchor.body.y + 10, 'tree')
 
   /* Clouds */
     clouds = game.add.group()
