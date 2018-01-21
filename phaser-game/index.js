@@ -8,7 +8,6 @@ window.onload = function() {
   // Cloud variables
   let clouds, cloud, cloudTwo
   let cloudArr = []
-  let cloudCollisionGroup
   let cloudBounds
 
   // Leaf variables
@@ -29,7 +28,8 @@ window.onload = function() {
   // Drop variables
   let drops, drop
   let dropCollisionGroup
-  let dropTimer = 0
+  let dropTimerOne = 0
+  let dropTimerTwo = 0
 
   // Global User variables
   let dragging = false
@@ -73,7 +73,7 @@ window.onload = function() {
     drops.enableBody = true
     drops.physicsBodyType = Phaser.Physics.P2JS
 
-    drops.createMultiple(60, 'drop')
+    drops.createMultiple(600, 'drop')
     drops.setAll('anchor.x', 0.5)
     drops.setAll('anchor.y', 0.5)
 
@@ -330,12 +330,14 @@ window.onload = function() {
 
     // Cloud
     cloud = clouds.create(270, 0, 'cloud')
+    cloud.name = 'cloud'
     cloud.inputEnabled = true
     cloud.input.enableDrag(true)
     cloud.input.boundsRect = cloudBounds
 
     // cloudTwo
     cloudTwo = clouds.create(425, 0, 'cloud')
+    cloudTwo.name = 'cloudTwo'
     cloudTwo.inputEnabled = true
     cloudTwo.input.enableDrag(true)
     cloudTwo.input.boundsRect = cloudBounds
@@ -391,7 +393,8 @@ window.onload = function() {
   function update() {
 
     // Timer for spawning drops
-    if (game.time.now > dropTimer) spawnDrop()
+    if (game.time.now > dropTimerOne) spawnDrop(cloud)
+    if (game.time.now > dropTimerTwo) spawnDrop(cloudTwo)
 
     // Clicking and rotating leaves
     if (game.input.activePointer.isDown && curLeafSelected) {
@@ -408,30 +411,24 @@ window.onload = function() {
 
   }
 
-  function spawnDrop() {
-
-    cloudArr = []
-
-    clouds.forEach(cloud => {
-      cloudArr.push(cloud)
-    })
+  function spawnDrop(curCloud) {
 
     drop = drops.getFirstExists(false)
 
     if (drop) {
-      let random = game.rnd.integerInRange(0, cloudArr.length-1)
       let randomX = game.rnd.integerInRange(30, 95)
-
-      let randoCloud = cloudArr[random]
 
       drop.body.setCircle(12.5)
       drop.body.setCollisionGroup(dropCollisionGroup)
       drop.body.collides([stemCollisionGroup])
       game.physics.p2.enable(drop)
 
-      drop.reset(randoCloud.body.x + randomX, randoCloud.body.y + 30)
+      drop.reset(curCloud.body.x + randomX, curCloud.body.y + 30)
 
-      dropTimer = game.time.now + 2000
+      let randoTimer = game.rnd.integerInRange(1500, 3000)
+
+      if (curCloud.name === 'cloud') dropTimerOne = game.time.now + randoTimer
+      if (curCloud.name === 'cloudTwo') dropTimerTwo = game.time.now + randoTimer
     }
 
   }
