@@ -8,6 +8,7 @@ window.onload = function() {
   // Game World Wall variables
   let wallLeft, wallRight, floor
   let floorCollisionGroup
+  let wallCollisionGroup
 
   // Water variables
   let waterBounds, water
@@ -78,16 +79,21 @@ window.onload = function() {
     stemCollisionGroup = game.physics.p2.createCollisionGroup()
     cloudCollisionGroup = game.physics.p2.createCollisionGroup()
     floorCollisionGroup = game.physics.p2.createCollisionGroup()
+    wallCollisionGroup = game.physics.p2.createCollisionGroup()
 
     game.physics.p2.updateBoundsCollisionGroup()
 
   /* World Walls */
-    boundsEnd = game.add.group()
-    boundsEnd.enableBody = true
-    boundsEnd.physicsBodyType = Phaser.Physics.P2JS
+    floorBounds = game.add.group()
+    floorBounds.enableBody = true
+    floorBounds.physicsBodyType = Phaser.Physics.P2JS
 
-    // floor
-    floor = boundsEnd.create(400, 600, 'floor')
+    wallBounds = game.add.group()
+    wallBounds.enableBody = true
+    wallBounds.physicsBodyType = Phaser.Physics.P2JS
+
+    // Floor
+    floor = floorBounds.create(400, 600, 'floor')
     floor.name = 'floor'
     floor.body.setRectangle(800, 4)
     floor.body.setCollisionGroup(floorCollisionGroup)
@@ -95,6 +101,27 @@ window.onload = function() {
     game.physics.p2.enable(floor)
     floor.body.kinematic = true
     floor.anchor.setTo(0.5, 0.5)
+
+    // Left Wall
+    leftWall = wallBounds.create(0, 300, 'LRWall')
+    leftWall.name = 'leftWall'
+    leftWall.body.setRectangle(2, 600)
+    leftWall.body.setCollisionGroup(wallCollisionGroup)
+    leftWall.body.collides([dropCollisionGroup])
+    game.physics.p2.enable(leftWall)
+    leftWall.body.kinematic = true
+    leftWall.anchor.setTo(0.5, 0.5)
+
+    // right Wall
+    rightWall = wallBounds.create(800, 300, 'LRWall')
+    rightWall.name = 'rightWall'
+    rightWall.body.setRectangle(2, 600)
+    rightWall.body.setCollisionGroup(wallCollisionGroup)
+    rightWall.body.collides([dropCollisionGroup])
+    game.physics.p2.enable(rightWall)
+    rightWall.body.kinematic = true
+    rightWall.anchor.setTo(0.5, 0.5)
+
 
   /* Water */
     waterBounds = game.add.group()
@@ -500,6 +527,7 @@ window.onload = function() {
       drop.body.setCollisionGroup(dropCollisionGroup)
       drop.body.collides(stemCollisionGroup)   
       drop.body.collides(floorCollisionGroup, hitFloor, this)
+      drop.body.collides(wallCollisionGroup, randomNote, this)
       game.physics.p2.enable(drop)
 
       drop.reset(curCloud.body.x + randomX, curCloud.body.y + 30)
@@ -512,6 +540,16 @@ window.onload = function() {
 
     }
 
+  }
+
+  function randomNote() {
+    let randomNoteArr = [
+      'A2', 'A3', 'A4', 'B2', 'B3', 'B4', 'C2', 'C3' , 'C4', 'D2', 'D3', 'D4', 
+      'E2', 'E3', 'E4', 'F2', 'F3', 'F4', 'G2', 'G3', 'G4'
+    ]
+    let randoIndex = game.rnd.integerInRange(0, 5)
+    let randoNote = randomNoteArr[randoIndex]
+    playNote(randoNote)
   }
 
   function hitFloor(body1, body2) {
