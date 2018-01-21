@@ -569,7 +569,7 @@ window.onload = function() {
 
       drop.reset(curCloud.body.x + randomX, curCloud.body.y + 30)
 
-      let randoTimer = game.rnd.integerInRange(2500, 3500)
+      let randoTimer = game.rnd.integerInRange(3500, 5500)
 
       if (curCloud.name === 'cloudOne') dropTimerOne = game.time.now + randoTimer
       if (curCloud.name === 'cloudTwo') dropTimerTwo = game.time.now + randoTimer
@@ -590,6 +590,13 @@ window.onload = function() {
   }
 
   function hitFloor(body1, body2) {
+    let randomNoteArr = [
+      'A1', 'B1', 'C1', 'D1', 
+      'E1', 'F1', 'G1'
+    ]
+    let randoIndex = game.rnd.integerInRange(0, 5)
+    let randoNote = randomNoteArr[randoIndex]
+    playNote(randoNote)
     body1.destroy()
   }
 
@@ -683,10 +690,10 @@ const synth = new Tone.PolySynth(4, Tone.Synth, {
       "partials" : [0, 2, 3, 4]
   },
   "envelope" : {
-      "attack" : 0.01,
-      "decay" : 0.2,
-      "sustain" : 0.02,
-      "release" : 0.02,
+    "attack": 2,
+    "decay": 1,
+    "sustain": 0.2,
+    "release": 2
   }
 }).toMaster()
 
