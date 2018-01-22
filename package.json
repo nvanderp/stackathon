@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "postinstall": "webpack -p",
     "build-client": "webpack",
     "build-client-watch": "webpack -w",
     "start": "node server",
